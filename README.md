@@ -61,6 +61,16 @@ If you have time, consider implementing one or more of the following features, o
 ---
 Good luck! If you have any questions, feel free to ask.
 
+## TLDR
+A .NET 10 minimal API for charging sessions, built as Endpoints → Services → Repositories, with EF Core on the in-memory provider.
+- `POST /api/users/{userId}/sessions` creates a session.
+- `PUT /api/sessions` updates an existing session.
+- `GET /api/users/{userId}/sessions?page=1&pageSize=20` returns a user's sessions newest first, paginated.
+- Validation happens in two places: request models check that the input is well-formed, and the `ChargingSession` domain model enforces the business rules. Blacklisted users are rejected.
+- A global exception handler returns ProblemDetails responses: 400 for bad input, 401 for blacklisted users, 422 for domain rule violations.
+- Unit tests cover the request models, the domain model, and the service, and a smoke integration test covers the endpoints.
+- I left out JWT auth and rate limiting. The decision log below explains why.
+
 ## Decision Log
 - Updated to .NET 10 and updated the NuGet packages.
 - Considered vertical feature slices, but with only one feature (charging sessions) a slice adds no value, so kept a layer-based structure (Controllers, Services, Repositories, Models).
