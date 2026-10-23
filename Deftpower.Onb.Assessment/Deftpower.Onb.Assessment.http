@@ -1,0 +1,28 @@
+@Host = http://localhost:5150
+@UserId = user-1
+
+GET {{Host}}/api/users/{{UserId}}/sessions?page=1&pageSize=20
+Accept: application/json
+
+###
+POST {{Host}}/api/users/{{UserId}}/sessions
+Content-Type: application/json
+
+{
+  "userId": "{{UserId}}",
+  "chargePointId": "chargepoint-1",
+  "startTime": "{{$isoTimestamp}}"
+}
+
+> {% client.global.set("SessionId", response.body.sessionId); %}
+
+###
+PUT {{Host}}/api/sessions
+Content-Type: application/json
+
+{
+  "sessionId": "{{SessionId}}",
+  "endTime": null,
+  "energyKwh": 20.0
+}
+
